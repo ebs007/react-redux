@@ -11,31 +11,23 @@ export default function Carrinho() {
 
   const dados = createSelector(
     [carrinhoSelect, itensSelect],
-    (select1, select2) => ({
-      carrinhoReduce: select1.reduce((itens, itemNoCarrinho) => {
+    (select1, select2) => {
+      let total = 0;
+      const carrinhoReduce = select1.reduce((itens, itemNoCarrinho) => {
         const item = select2.find((item) => item.id === itemNoCarrinho.id);
+        total += item.preco * itemNoCarrinho.quantidade;
+        console.log(itens);
         itens.push({
           ...item,
           quantidade: itemNoCarrinho.quantidade,
         });
         return itens;
-      }, []),
-    }),
+      }, []);
+      return { carrinho: carrinhoReduce, total };
+    },
   );
 
-  const { carrinhoReduce } = useSelector(dados);
-
-  //   const carrinho = useSelector((state) => {
-  //     const carrinhoReduce = select1.reduce((itens, itemNoCarrinho) => {
-  //       const item = select2.find((item) => item.id === itemNoCarrinho.id);
-  //       itens.push({
-  //         ...item,
-  //         quantidade: itemNoCarrinho.quantidade,
-  //       });
-  //       return itens;
-  //     }, []);
-  //     return carrinhoReduce;
-  //   } );
+  const { carrinho, total } = useSelector(dados);
 
   return (
     <div>
@@ -44,13 +36,15 @@ export default function Carrinho() {
         descricao="Confira produtos que você adicionou ao carrinho."
       />
       <div className={styles.carrinho}>
-        {carrinhoReduce.map((item) => (
-          <Item key={item.id} {...item} />
+        {/* {console.log(carrinhoReduce)} */}
+        {carrinho.map((item) => (
+          <Item key={item.id} {...item} carrinho />
         ))}
         <div className={styles.total}>
           <strong>Resumo da compra</strong>
           <span>
-            Subtotal: <strong> R$ {(0.0).toFixed(2)}</strong>
+            {console.log(carrinho)}
+            Subtotal: <strong> R$ {total.toFixed(2)}</strong>
           </span>
         </div>
       </div>
