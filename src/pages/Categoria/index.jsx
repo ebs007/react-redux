@@ -10,13 +10,20 @@ export default function Categoria() {
 
   const categoriasSelect = (state) => state.categorias;
   const itensSelect = (state) => state.itens;
+  const buscaSelect = (state) => state.busca;
 
   const dados = createSelector(
-    [categoriasSelect, itensSelect],
-    (select1, select2) => ({
-      categoria: select1.find((categoria) => categoria.id === nomeCategoria),
-      itens: select2.filter((item) => item.categoria === nomeCategoria),
-    }),
+    [categoriasSelect, itensSelect, buscaSelect],
+    (select1, select2, select3) => {
+      const regexp = new RegExp(select3, "i");
+      return {
+        categoria: select1.find((categoria) => categoria.id === nomeCategoria),
+        itens: select2.filter(
+          (item) =>
+            item.categoria === nomeCategoria && item.titulo.match(regexp),
+        ),
+      };
+    },
   );
 
   const { categoria, itens } = useSelector(dados);
